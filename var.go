@@ -28,5 +28,6 @@ var (
 )
 
 type (
+	rType        = reflect.Type
 	rSliceHeader = reflect.SliceHeader
 )

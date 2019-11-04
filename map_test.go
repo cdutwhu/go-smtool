@@ -2,6 +2,18 @@ package smtool
 
 import "testing"
 
+func TestMapPrint(t *testing.T) {
+	m := map[float32]string{-100: "A B", 2.01: "D", 3: "F", -1: "AAA"}
+	MapPrint(m)
+}
+
+func TestKeys(t *testing.T) {
+	m := map[int8]string{-3: "neg", -100: "A B", 2: "D", 3: "F", -1: "AAA"}
+	m1 := map[float32]string{-100: "A B", 22.22: "D", 3: "F", -1: "AAA", 11.001: "11"}
+	fPln(Keys(m))
+	fPln(Keys(m1))
+}
+
 func TestMap(t *testing.T) {
 	m := map[string]string{"zabc": "b", "f": "d", "e": "f"}
 	fPln(Keys(m).([]string))

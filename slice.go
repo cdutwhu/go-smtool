@@ -132,8 +132,8 @@ func ElesAreSame(slice interface{}) bool {
 	return rValueOf(Distinct(slice)).Len() == 1
 }
 
-// // SliceIntersect :
-// func SliceIntersect(s1, s2 interface{}) interface{} {
+// // Intersect :
+// func Intersect(s1, s2 interface{}) interface{} {
 // 	v1, v2 := ValueOf(s1), ValueOf(s2)
 // 	pc(v1.Kind() != rfl.Slice, fEf("s1 is NOT a SLICE!"))
 // 	pc(v2.Kind() != rfl.Slice, fEf("s2 is NOT a SLICE!"))
@@ -145,8 +145,8 @@ func ElesAreSame(slice interface{}) bool {
 // 	}
 // }
 
-// // SliceUnion :
-// func SliceUnion(s1, s2 interface{}) interface{} {
+// // Union :
+// func Union(s1, s2 interface{}) interface{} {
 // 	v1, v2 := valueOf(s1), valueOf(s2)
 // 	pc(v1.Kind() != rfl.Slice, fEf("s1 is NOT a SLICE!"))
 // 	pc(v2.Kind() != rfl.Slice, fEf("s2 is NOT a SLICE!"))

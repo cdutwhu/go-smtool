@@ -10,7 +10,7 @@ func MapPrint(m interface{}) {
 	re := regexp.MustCompile(`^[+-]?[0-9]*\.?[0-9]+:`)
 	mstr := fSp(m)
 	mstr = mstr[4 : len(mstr)-1]
-	fPln(mstr)
+	// fPln(mstr)
 	I := 0
 	rmIlist := []int{}
 	ss := sSpl(mstr, " ")
@@ -24,7 +24,7 @@ func MapPrint(m interface{}) {
 	}
 	for i, s := range ss {
 		if !IsIn(i, rmIlist) {
-			fPln(i, s)
+			fPln(s)
 		}
 	}
 }
@@ -35,22 +35,31 @@ func Keys(m interface{}) interface{} {
 	// pc(v.Kind() != ref.Map, fEf("NOT A MAP!"))
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
-		kType := rTypeOf(keys[0].Interface())
-		rstValue := rMakeSlice(rSliceOf(kType), L, L)
+		firstKey := keys[0].Interface()
+		kType := rTypeOf(firstKey)
+		rtVal := rMakeSlice(rSliceOf(kType), L, L)
 		for i, k := range keys {
-			rstValue.Index(i).Set(rValueOf(k.Interface()))
+			rtVal.Index(i).Set(rValueOf(k.Interface()))
 		}
-		// sort keys if keys are int or float64 or string
-		rst := rstValue.Interface()
-		switch keys[0].Interface().(type) {
+		// sort keys if keys are sortable
+		rt := rtVal.Interface()
+		switch firstKey.(type) {
 		case int:
-			sort.Ints(rst.([]int))
+			sort.Ints(rt.([]int))
 		case float64:
-			sort.Float64s(rst.([]float64))
+			sort.Float64s(rt.([]float64))
 		case string:
-			sort.Strings(rst.([]string))
+			sort.Strings(rt.([]string))
+		case int64, int32, int16, int8:
+			lsInt := Conv2Ints(rt)
+			sort.Ints(lsInt)
+			rt = Ints2Digits(lsInt, rTypeOf(firstKey))
+		case float32:
+			lsF64s := Conv2F64s(rt)
+			sort.Float64s(lsF64s)
+			rt = F64s2Digits(lsF64s, rTypeOf(firstKey))
 		}
-		return rst
+		return rt
 	}
 	return nil
 }
@@ -62,14 +71,14 @@ func KVs(m interface{}) (interface{}, interface{}) {
 	keys := v.MapKeys()
 	if L := len(keys); L > 0 {
 		kType := rTypeOf(keys[0].Interface())
-		kRst := rMakeSlice(rSliceOf(kType), L, L)
+		rtKey := rMakeSlice(rSliceOf(kType), L, L)
 		vType := rTypeOf(v.MapIndex(keys[0]).Interface())
-		vRst := rMakeSlice(rSliceOf(vType), L, L)
+		rtVal := rMakeSlice(rSliceOf(vType), L, L)
 		for i, k := range keys {
-			kRst.Index(i).Set(rValueOf(k.Interface()))
-			vRst.Index(i).Set(rValueOf(v.MapIndex(k).Interface()))
+			rtKey.Index(i).Set(rValueOf(k.Interface()))
+			rtVal.Index(i).Set(rValueOf(v.MapIndex(k).Interface()))
 		}
-		return kRst.Interface(), vRst.Interface()
+		return rtKey.Interface(), rtVal.Interface()
 	}
 	return nil, nil
 }
