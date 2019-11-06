@@ -3,8 +3,8 @@ package smtool
 // Idx : first element position in slice if found, otherwise, get -1
 func Idx(e, slice interface{}) int {
 	v := rValueOf(slice)
-	l, I := v.Len(), -1
-	for i := 0; i < l; i++ {
+	L, I := v.Len(), -1
+	for i := 0; i < L; i++ {
 		if v.Index(i).Interface() == e {
 			I = i
 			break
@@ -21,8 +21,8 @@ func IsIn(e, slice interface{}) bool {
 // Search : search the first chk-qualified element index from slice
 func Search(slice interface{}, chk func(int) bool) (bool, int, interface{}) {
 	v := rValueOf(slice)
-	l, I, rt := v.Len(), -1, rNew(v.Type())
-	for i := 0; i < l; i++ {
+	L, I, rt := v.Len(), -1, rNew(v.Type())
+	for i := 0; i < L; i++ {
 		if chk(i) {
 			I, rt = i, v.Index(i)
 			break
@@ -34,8 +34,8 @@ func Search(slice interface{}, chk func(int) bool) (bool, int, interface{}) {
 // SearchAll :
 func SearchAll(slice interface{}, chk func(int) bool) (bool, []int, interface{}) {
 	v := rValueOf(slice)
-	l, fdIdx := v.Len(), []int{}
-	for i := 0; i < l; i++ {
+	L, fdIdx := v.Len(), []int{}
+	for i := 0; i < L; i++ {
 		if chk(i) {
 			fdIdx = append(fdIdx, i)
 		}
@@ -50,8 +50,8 @@ func SearchAll(slice interface{}, chk func(int) bool) (bool, []int, interface{})
 // Delete :
 func Delete(slice interface{}, lsPos ...int) (bool, interface{}) {
 	v := rValueOf(slice)
-	l, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
-	for i := 0; i < l; i++ {
+	L, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
+	for i := 0; i < L; i++ {
 		if IsIn(i, lsPos) {
 			continue
 		}
@@ -66,8 +66,8 @@ func Replace(slice interface{}, mPosVal map[int]interface{}) (bool, interface{})
 	lsPos := Keys(mPosVal).([]int)
 
 	v := rValueOf(slice)
-	l, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
-	for i := 0; i < l; i++ {
+	L, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
+	for i := 0; i < L; i++ {
 		if IsIn(i, lsPos) {
 			continue
 		}
@@ -87,12 +87,12 @@ func Replace(slice interface{}, mPosVal map[int]interface{}) (bool, interface{})
 
 // }
 
-// Distinct :
-func Distinct(slice interface{}) interface{} {
+// ToSet :
+func ToSet(slice interface{}) interface{} {
 	v := rValueOf(slice)
-	l, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
+	L, rt := v.Len(), rMakeSlice(v.Type(), 0, 1)
 NEXT:
-	for i := 0; i < l; i++ {
+	for i := 0; i < L; i++ {
 		av := v.Index(i)
 		for j := 0; j < rt.Len(); j++ {
 			if av.Interface() == rt.Index(j).Interface() {
@@ -129,7 +129,7 @@ func SeqContains(slice interface{}, lsE ...interface{}) bool {
 
 // ElesAreSame :
 func ElesAreSame(slice interface{}) bool {
-	return rValueOf(Distinct(slice)).Len() == 1
+	return rValueOf(ToSet(slice)).Len() == 1
 }
 
 // // Intersect :
@@ -194,38 +194,13 @@ func Cover(lsSlice ...interface{}) interface{} {
 	return attached
 }
 
-// FastDel : disregard slice order, slice is used for "set"
-// func FastDel(slice interface{}, p int) (bool, interface{}) {
-// 	v := rValueOf(slice)
-// 	l := v.Len()
-// 	if l > 0 && p >= 0 && p < l {
-// 		last := v.Index(l - 1)
-// 		v.Index(p).Set(last)
-// 		switch slice.(type) {
-// 		case []int:
-// 			vdata := v.Interface().([]int)
-// 			sh := (*rSliceHeader)(unsafe.Pointer(&vdata))
-// 			sh.Len = l - 1
-// 			return true, vdata
-// 		case []string:
-// 			vdata := v.Interface().([]string)
-// 			sh := (*rSliceHeader)(unsafe.Pointer(&vdata))
-// 			sh.Len = l - 1
-// 			return true, vdata
-// 		case []float32:
-// 			vdata := v.Interface().([]float32)
-// 			sh := (*rSliceHeader)(unsafe.Pointer(&vdata))
-// 			sh.Len = l - 1
-// 			return true, vdata
-// 		case []float64:
-// 			vdata := v.Interface().([]float64)
-// 			sh := (*rSliceHeader)(unsafe.Pointer(&vdata))
-// 			sh.Len = l - 1
-// 			return true, vdata
-// 			// **************************** //
-// 		default:
-// 			panic("add your [object slice case] in <FastDel>")
-// 		}
-// 	}
-// 	return false, slice
-// }
+// SetDel : disregard set order, set is used for "set"
+func SetDel(set interface{}, p int) (bool, interface{}) {
+	v := rValueOf(set)
+	L := v.Len()
+	if L > 0 && p >= 0 && p < L {
+		v.Index(p).Set(v.Index(L - 1))
+		return true, v.Slice(0, L-1).Interface()
+	}
+	return false, set
+}

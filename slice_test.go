@@ -1,6 +1,8 @@
 package smtool
 
-import "testing"
+import (
+	"testing"
+)
 
 var (
 	arrInt = []int{11, 22, 33, 44, 55}
@@ -63,6 +65,13 @@ func TestSearchAll(t *testing.T) {
 	t.Log(Delete(arrInt, iDel...))
 }
 
-// func TestFastDel(t *testing.T) {
-// 	t.Log(FastDel(arrStr, 1))
-// }
+func TestSetDel(t *testing.T) {
+	strs := []string{}
+	for i := 0; i < 1000000; i++ {
+		strs = append(strs, fSf("%d", i))
+	}
+
+	SetDel(strs, 1)
+	// Delete(strs, 1)
+	fPln(strs[:10])
+}

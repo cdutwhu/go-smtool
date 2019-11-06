@@ -9,7 +9,7 @@ func TestMapPrint(t *testing.T) {
 
 func TestKeys(t *testing.T) {
 	m := map[int8]string{-3: "neg", -100: "A B", 2: "D", 3: "F", -1: "AAA"}
-	m1 := map[float32]string{-100: "A B", 22.22: "D", 3: "F", -1: "AAA", 11.001: "11"}
+	m1 := map[int8]string{-100: "A B", 22: "D", 3: "F", -1: "AAA", 11: "11"}
 	fPln(Keys(m))
 	fPln(Keys(m1))
 }

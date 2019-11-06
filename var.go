@@ -31,3 +31,8 @@ type (
 	rType        = reflect.Type
 	rSliceHeader = reflect.SliceHeader
 )
+
+var (
+	TypFloat64 = rTypeOf(float64(0))
+	TypFloat32 = rTypeOf(float32(0))
+)

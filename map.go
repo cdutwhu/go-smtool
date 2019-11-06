@@ -50,14 +50,10 @@ func Keys(m interface{}) interface{} {
 			sort.Float64s(rt.([]float64))
 		case string:
 			sort.Strings(rt.([]string))
-		case int64, int32, int16, int8:
-			lsInt := Conv2Ints(rt)
-			sort.Ints(lsInt)
-			rt = Ints2Digits(lsInt, rTypeOf(firstKey))
-		case float32:
-			lsF64s := Conv2F64s(rt)
-			sort.Float64s(lsF64s)
-			rt = F64s2Digits(lsF64s, rTypeOf(firstKey))
+		case int64, int32, int16, int8, float32:
+			F64s := NumTypeConv(rt, rTypeOf(float64(0))).([]float64)
+			sort.Float64s(F64s)
+			rt = NumTypeConv(F64s, rTypeOf(firstKey))
 		}
 		return rt
 	}
